@@ -7,10 +7,12 @@
             Console.Write("Hvilket ord skal der søges efter: ");
             var soegeWord = Console.ReadLine();
             Console.Write("Hvilket tekst skal der søges i: ");
-            string hoestakTekst = Console.ReadLine();
+            var hoestakTekst = Console.ReadLine();
 
-            int antalForekomster = WordCount(soegeWord, hoestakTekst);
-            bool? countState = checkCount(antalForekomster);
+            // count words and exit if error
+            int? antalForekomster = WordCount(soegeWord, hoestakTekst);
+            // how many times was word present in text?
+            bool? countState = checkCount(antalForekomster.Value);
             if (countState == null)
             {
                 Console.WriteLine("Det søgte ord findes ikke i den angivne tekst.");
@@ -46,22 +48,25 @@
                             userFolderSaver.saveFile(hoestakTekst);
                             Console.WriteLine("File saved in User/Documents Folder");
                         }
-                        } while (input == null);
+                        } while (input != "1" && input != "2");
                 }
             }
         }
-
-        static int WordCount(string ord, string tekst)
+        public static int? WordCount(string ord, string tekst)
         {
+            if (ord == string.Empty || tekst == string.Empty )
+            {
+                Result.ErrorResult(ord);
+            }
+
             int count = 0;
             int index = 0;
-
             while ((index = tekst.IndexOf(ord, index, StringComparison.OrdinalIgnoreCase)) != -1 && tekst != "")
             {
                 count++;
                 index += ord.Length;
             }
-            return count;
+            return Result.ErrorResult(count);
         }
         static bool? checkCount(int count)
         {
