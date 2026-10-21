@@ -20,17 +20,33 @@
                 Console.WriteLine($"Ordet ‘{soegeWord}’ forekommer {antalForekomster} gange.");
                 if ((bool)countState)
                 {
-                    // Source - https://stackoverflow.com/a/19329696
-                    // Posted by xxbbcc, modified by community. See post 'Timeline' for change history
-                    // Retrieved 2026-10-18, License - CC BY-SA 3.0
+                    string? input;
 
-                    //string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    //string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                    string path = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName;
-                    string fileName = Path.Combine(path, @"..\..\..\typedemo_02.txt");
+                    do {
+                        // prompt user for file save location
+                        Console.WriteLine("Hvor vil du gemme teksten?\n-Projektfolder (1)\n-Brugerfolder (2)\n");
+                        input = Console.ReadLine();
+                    
+                        if (input == "1")
+                        {
+                            // get project directory
+                            string path = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName;
+                            string directoryPath = Path.Combine(path, (@".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar));
+                            string fileName = "typedemo_03.txt";
 
-                    System.IO.File.WriteAllText(fileName, soegeWord);
-
+                            // save file in project folder                 
+                            Saver saver = new Saver(directoryPath + fileName);
+                            saver.saveFile(hoestakTekst);
+                            Console.WriteLine("File saved in Project Folder");
+                        }
+                        else if (input == "2")
+                        {
+                            // save file in user folder
+                            UserFolderSaver userFolderSaver = new UserFolderSaver();
+                            userFolderSaver.saveFile(hoestakTekst);
+                            Console.WriteLine("File saved in User/Documents Folder");
+                        }
+                        } while (input == null);
                 }
             }
         }
@@ -40,7 +56,7 @@
             int count = 0;
             int index = 0;
 
-            while ((index = tekst.IndexOf(ord, index, StringComparison.OrdinalIgnoreCase)) != -1)
+            while ((index = tekst.IndexOf(ord, index, StringComparison.OrdinalIgnoreCase)) != -1 && tekst != "")
             {
                 count++;
                 index += ord.Length;
@@ -53,7 +69,7 @@
             {
                 return null;
             }
-            else if (count < 10)
+            else if (count >= 1 && count < 10)
             {
                 return false;
             }
